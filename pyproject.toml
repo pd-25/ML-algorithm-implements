@@ -1,0 +1,14 @@
+[project]
+name = "ml-algorithm-implements"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.141.1",
+    "nltk>=3.10.3",
+    "numpy>=2.5.2",
+    "pandas>=3.0.5",
+    "scikit-learn==1.6.1",
+    "uvicorn[standard]>=0.35.0",
+]
