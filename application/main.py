@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 import pickle
+import pandas as pd
 from pathlib import Path
 
-from helper import transform_text
-from schema import APIResponse, InputData, LogisticRegRequest
+from application.helper import transform_text
+from application.schema import APIResponse, InputData, LogisticRegRequest
 
 app = FastAPI(title="ML model implmentation through api")
 
@@ -38,9 +39,16 @@ def predict_input(input_text: InputData):
 
 @app.post("/logistic-reg-predict", response_model=APIResponse)
 def predict_logistic_reg(request_input: LogisticRegRequest):
-    print(request_input)
-    return "l"
-    result = logistic_model.predict(request_input)[0]
+    input_data = pd.DataFrame([request_input.model_dump()])
+
+    result = logistic_model.predict(input_data)[0]
     print(result)
-    return result
+    # response
+    msg = ""
+    if result == 1:
+        msg = "This is a fraud transcation"
+    else:
+        msg = "Not fraud transcation"
+
+    return APIResponse(success=True, message=msg)
     
