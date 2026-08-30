@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import FastAPI
 import pickle
 import pandas as pd
@@ -17,6 +19,11 @@ with open(MODEL_DIR / "naive_bayes/model.pkl", "rb") as model_file:
 
 with open(MODEL_DIR / "logistic_regression/logistic_model.pkl", "rb") as logistic_file:
     logistic_model = pickle.load(logistic_file)
+
+
+@app.get('/health')
+def health_check():
+    return {'succes': True, 'time': datetime.datetime.now()}
 
 @app.post("/naive-predict", response_model=APIResponse)
 def predict_input(input_text: InputData):
