@@ -1,5 +1,5 @@
-*.pkl
-*.pickle
+# *.pkl
+# *.pickle
 /.venv
 *.csv
 *.pyc
