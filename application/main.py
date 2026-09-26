@@ -1,7 +1,8 @@
 import datetime
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import pickle
+import httpx
 import pandas as pd
 from pathlib import Path
 
@@ -24,6 +25,29 @@ with open(MODEL_DIR / "logistic_regression/logistic_model.pkl", "rb") as logisti
 @app.get('/health')
 def health_check():
     return {'succes': True, 'time': datetime.datetime.now()}
+
+@app.get('/health-textgeneration')
+async def get_external_data():
+    url = "https://text-generation-llm-api.onrender.com/health"
+    
+    # Use async context manager for the client
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url)
+            # Raise an exception for 4xx and 5xx status codes
+            response.raise_for_status() 
+            return response.json()
+            
+        except httpx.HTTPStatusError as exc:
+            raise HTTPException(
+                status_code=exc.response.status_code, 
+                detail="External API returned an error"
+            )
+        except httpx.RequestError:
+            raise HTTPException(
+                status_code=503, 
+                detail="External API is unreachable"
+            )
 
 @app.post("/naive-predict", response_model=APIResponse)
 def predict_input(input_text: InputData):
